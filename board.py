@@ -1,5 +1,7 @@
+
 import pieces
 from move import Move
+
 
 class Board:
 
@@ -133,6 +135,7 @@ class Board:
         return (x >= 0 and y >= 0 and x < Board.WIDTH and y < Board.HEIGHT)
 
     def to_string(self):
+
         string =  "    A  B  C  D  E  F  G  H\n"
         string += "    -----------------------\n"
         for y in range(Board.HEIGHT):
@@ -140,6 +143,7 @@ class Board:
             for x in range(Board.WIDTH):
                 piece = self.chesspieces[x][y]
                 if (piece != 0):
+                    
                     string += piece.to_string()
                 else:
                     string += ".. "
