@@ -24,59 +24,113 @@ for row in range(8):       # Над каждой клеткой создаём �
 
 figures = [] # Список для фигур. Все созданные фигуры помещаем в список
 
+if not 'models_compressed\ferz.bam':
 
-pes = Entity(
-    model='peshka.obj',
+    pes = Entity(
+        model='peshka.obj',
+        color=color.clear, 
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+
+    tur = Entity(
+        model='tur.obj',  
+        color=color.clear, 
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+
+    kon = Entity(
+        model='kon.obj',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+
+    ofc = Entity(
+        model='oficer.obj',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+
+    kin = Entity(
+        model='king.obj',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+
+    fer = Entity(
+        model='ferz.obj',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
+else:
+    pes = Entity(
+    model='peshka',
     color=color.clear, 
     position=(0, 10, 0),
     shader = lit_with_shadows_shader,
     collider = 'mesh'
-)
+    )
 
-tur = Entity(
-    model='tur.obj',  
-    color=color.clear, 
-    scale=(1, 1),
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-)
+    tur = Entity(
+        model='tur',  
+        color=color.clear, 
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
 
-kon = Entity(
-    model='kon.obj',
-    color=color.clear,
-    scale=(1, 1),
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-)
+    kon = Entity(
+        model='kon',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
 
-ofc = Entity(
-    model='oficer.obj',
-    color=color.clear,
-    scale=(1, 1),
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-)
+    ofc = Entity(
+        model='oficer',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
 
-kin = Entity(
-    model='king.obj',
-    color=color.clear,
-    scale=(1, 1),
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-)
+    kin = Entity(
+        model='king',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
 
-fer = Entity(
-    model='ferz.obj',
-    color=color.clear,
-    scale=(1, 1),
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-)
+    fer = Entity(
+        model='ferz',
+        color=color.clear,
+        scale=(1, 1),
+        position=(0, 10, 0),
+        shader = lit_with_shadows_shader,
+        collider = 'mesh'
+    )
 
 ground = Entity(
     model='plane',  # Используем плоскость как модель
@@ -128,7 +182,7 @@ def figures_rasstanovka():
                         elif piece.to_string()[1] == 'R':
                             figures += [duplicate(tur, color=color.dark_gray, position=(x,0,abs(-7+y)), shader=lit_with_shadows_shader, collider='mesh')]
                         elif piece.to_string()[1] == 'N':
-                            figures += [duplicate(kon, color=color.dark_gray, position=(x,0,abs(-7+y)), shader=lit_with_shadows_shader, collider='mesh')]
+                            figures += [duplicate(kon, color=color.dark_gray, position=(x,0,abs(-7+y)),rotation_y=180, shader=lit_with_shadows_shader, collider='mesh')]
                         elif piece.to_string()[1] == 'B':
                             figures += [duplicate(ofc, color=color.dark_gray, position=(x,0,abs(-7+y)), shader=lit_with_shadows_shader, collider='mesh')]
                         elif piece.to_string()[1] == 'Q':
@@ -146,16 +200,31 @@ Thread(target=figures_rasstanovka).start()
 a_w = False
 a_b = False
 
+ai_anim = False
+
 def black_hod():
     pass
 
 def update():
     global cell_pos, y, select_figure, board, a_w, a_b
 
-    if any((a_w, a_b)):
-        if a_w:
-            pass
+    if a_w:
+        if a_w[0].position == a_w[1]:
+            for i in figures:
+                if i.position == a_w[0].position and a_w[0] != i:
+                    figures.remove(i)
+                    destroy(i)
+                    break
+            a_w = False
 
+    if a_b:
+        if a_b[0].position == a_b[1]:
+            for i in figures:
+                if i.position == a_b[0].position and a_b[0] != i:
+                    figures.remove(i)
+                    destroy(i)
+                    break
+            a_b = False
 
     if mouse.right:   # Выбор фигуры правой кнопкой мыши
         #if not select_figure:
@@ -182,7 +251,7 @@ def update():
                 board.perform_move(move)
                 
                 select_figure.animate_position(cell_pos, curve=curve.linear, duration=0.5)
-                a_w = True
+                a_w = (select_figure, cell_pos)
                 print("User move: " + move.to_string())
                 print(board.to_string())
                 Thread(target=ai_mov).start()
@@ -195,13 +264,14 @@ def update():
 def input(key):
     if key == 'scroll up':
         if player.Y < 5:
-            player.position += (0,1,0)
+            player.animate_position(player.position + (0,1,0), curve=curve.linear, duration=0.3)
     if key == 'scroll down':
         if player.Y > 0:
-            player.position += (0,-1,0)
+            player.animate_position(player.position + (0,-1,0), curve=curve.linear, duration=0.3)
 
 
 def ai_mov():
+    global a_b
     ai_move = ai.AI.get_ai_move(board, [])
     if (ai_move == 0):
         if (board.is_check(pieces.Piece.BLACK)):
@@ -216,7 +286,7 @@ def ai_mov():
     for i in figures:
         if i.X == ai_move.xfrom and i.Z == abs(-7+ai_move.yfrom):
             i.animate_position((ai_move.xto, 0 , abs(-7+ai_move.yto)), curve=curve.linear, duration=0.5)
-            a_b = True
+            a_b = (i, (ai_move.xto, 0 , abs(-7+ai_move.yto)))
     print(board.to_string())
 
 
