@@ -8,9 +8,9 @@ from threading import Thread
 
 app = Ursina(fullscreen=True)
 
-sky = Sky(texture='radial_gradient')
+sky = Sky(texture='brick')
 
-sun = DirectionalLight( position=(0, 5, 0), color=color.light_gray, shadows = True) # добавляем освещение, включаем тени
+sun = DirectionalLight( position=(0, 5, 0), color=color.light_gray, shadows = True, shadow_map_resolution = Vec2(5000, 5000)) # добавляем освещение, включаем тени
 sun.look_at(Vec3(0,-1,0))
 
 player = FirstPersonController(gravity = 0, y=2, z=-8)
@@ -24,113 +24,117 @@ for row in range(8):       # Над каждой клеткой создаём �
 
 figures = [] # Список для фигур. Все созданные фигуры помещаем в список
 
-if not 'models_compressed\ferz.bam':
+def load_models_():
+    global pes, tur, kon, ofc, kin, fer
+    if not 'models_compressed\ferz.bam':
 
-    pes = Entity(
-        model='peshka.obj',
+        pes = Entity(
+            model='peshka.obj',
+            color=color.clear, 
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+
+        tur = Entity(
+            model='tur.obj',  
+            color=color.clear, 
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+
+        kon = Entity(
+            model='kon.obj',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+
+        ofc = Entity(
+            model='oficer.obj',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+
+        kin = Entity(
+            model='king.obj',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+
+        fer = Entity(
+            model='ferz.obj',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
+    else:
+        pes = Entity(
+        model='peshka',
         color=color.clear, 
         position=(0, 10, 0),
         shader = lit_with_shadows_shader,
         collider = 'mesh'
-    )
+        )
 
-    tur = Entity(
-        model='tur.obj',  
-        color=color.clear, 
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
+        tur = Entity(
+            model='tur',  
+            color=color.clear, 
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
 
-    kon = Entity(
-        model='kon.obj',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
+        kon = Entity(
+            model='kon',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
 
-    ofc = Entity(
-        model='oficer.obj',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
+        ofc = Entity(
+            model='oficer',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
 
-    kin = Entity(
-        model='king.obj',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
+        kin = Entity(
+            model='king',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
 
-    fer = Entity(
-        model='ferz.obj',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
-else:
-    pes = Entity(
-    model='peshka',
-    color=color.clear, 
-    position=(0, 10, 0),
-    shader = lit_with_shadows_shader,
-    collider = 'mesh'
-    )
+        fer = Entity(
+            model='ferz',
+            color=color.clear,
+            scale=(1, 1),
+            position=(0, 10, 0),
+            shader = lit_with_shadows_shader,
+            collider = 'mesh'
+        )
 
-    tur = Entity(
-        model='tur',  
-        color=color.clear, 
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
-
-    kon = Entity(
-        model='kon',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
-
-    ofc = Entity(
-        model='oficer',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
-
-    kin = Entity(
-        model='king',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
-
-    fer = Entity(
-        model='ferz',
-        color=color.clear,
-        scale=(1, 1),
-        position=(0, 10, 0),
-        shader = lit_with_shadows_shader,
-        collider = 'mesh'
-    )
+Thread(target=load_models_).start()
 
 ground = Entity(
     model='plane',  # Используем плоскость как модель
@@ -191,7 +195,7 @@ def figures_rasstanovka():
                             figures += [duplicate(kin, color=color.dark_gray, position=(x,0,abs(-7+y)), shader=lit_with_shadows_shader, collider='mesh')]
 
 scene.fog_density = .1          # sets exponential density
-scene.fog_density = (0, 40)   # sets linear density start and end
+scene.fog_density = (0, 20)   # sets linear density start and end
 
 print(board.to_string())
 Thread(target=figures_rasstanovka).start()
@@ -236,6 +240,12 @@ def update():
 
     if mouse.left:   # Выбор клетки левой кнопкой мыши
         for j in range(0, 64):
+            print(select_figure)
+            if mouse.hovered_entity == grid[j] and (select_figure.position - (0,1,0) == grid[j].position):
+                select_figure.animate_position(select_figure.position + (0,-1,0), curve=curve.linear, duration=0.5)
+                #select_figure = None
+                break
+
             if mouse.hovered_entity == grid[j]:           
                 cell_pos = mouse.hovered_entity.position
                 move = get_valid_user_move(board)
