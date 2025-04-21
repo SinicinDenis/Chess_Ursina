@@ -1,9 +1,3 @@
-from ursina import *
-from ursina.prefabs.radial_menu import RadialMenu, RadialMenuButton
-import os
-from threading import Thread
-
-
 class Music_player(Audio):
     def __init__(self):
         super().__init__()
@@ -60,14 +54,12 @@ class Music_player(Audio):
         print(self.sp)
     
     def input(self, key):
-        print(key)
-        if key == 'space':
-            self.sp[0].play()
         
         if key == 'm':
             self.rm.enabled = True
             self.text_vol += [Text(name='t',text=f'{round(self.volume_, 1)}',position=self.rm.position)]
             print(scene.entities)
+
 
     def update(self):
         if self.rm.enabled == False:
@@ -77,17 +69,14 @@ class Music_player(Audio):
                 self.text_vol.clear()
 
 
-
-app = Ursina()
-EditorCamera()
-mp = Music_player()
-
-
-
-
-def input(key):
-    pass
-
+if __name__ == "__main__":
+    from ursina import *
+    from ursina.prefabs.radial_menu import RadialMenu, RadialMenuButton
+    import os
+    from threading import Thread
+    app = Ursina()
+    EditorCamera()
+    mp = Music_player()
+    app.run()
 
 
-app.run()
