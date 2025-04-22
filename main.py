@@ -7,23 +7,6 @@ from threading import Thread
 
 
 app = Ursina(fullscreen=True)
-
-sky = Sky(texture='brick')
-
-sun = DirectionalLight( position=(0, 5, 0), color=color.light_gray, shadows = True, shadow_map_resolution = Vec2(5000, 5000)) # добавляем освещение, включаем тени
-sun.look_at(Vec3(0,-1,0))
-
-player = FirstPersonController(gravity = 0, y=2, z=-8)
-
-grid = []   # Список для клеток
-for row in range(8):       # Над каждой клеткой создаём плоскость, чтобы иметь возможность взаимодействия с каждой клеткой    
-    for column in range(8):
-        quad = Entity(model='quad', color=color.black10, highlight_color=color.rgba(1,1,1, 1), scale=1, rotation_x = 90, collider = 'box')
-        quad.position = (column, 0, row)
-        grid.append(quad)
-
-figures = [] # Список для фигур. Все созданные фигуры помещаем в список
-
 def load_models_():
     global pes, tur, kon, ofc, kin, fer
     if not 'models_compressed\ferz.bam':
@@ -133,10 +116,10 @@ def load_models_():
             shader = lit_with_shadows_shader,
             collider = 'mesh'
         )
-
 Thread(target=load_models_).start()
 
 ground = Entity(
+    name = 'ground',
     model='plane',  # Используем плоскость как модель
     texture='doska_shahmat.png',  # Применяем текстуру
     scale=(8, 1, 8),  # Устанавливаем размер
@@ -144,7 +127,6 @@ ground = Entity(
     rotation_y = 90,
     shader = lit_with_shadows_shader
 )
-
 coord = Entity(
     model='plane',  # Используем плоскость как модель
     texture='doska.jpg',  # Применяем текстуру координат доски
@@ -152,6 +134,28 @@ coord = Entity(
     position=(3.5, -0.02, 3.5),
     shader = lit_with_shadows_shader
 )
+
+sky = Sky(texture='radial_gradient')
+
+sun = DirectionalLight( position=(0, 5, 0), color=color.light_gray, shadows = True, shadow_map_resolution = Vec2(1000, 1000)) # добавляем освещение, включаем тени
+sun.look_at(Vec3(0,-1,0))
+
+editor = EditorCamera()
+
+editor.look_at(ground)
+editor.disable()
+player = FirstPersonController(gravity = 0, y=2, z=-8)
+
+
+grid = []   # Список для клеток
+for row in range(8):       # Над каждой клеткой создаём плоскость, чтобы иметь возможность взаимодействия с каждой клеткой    
+    for column in range(8):
+        quad = Entity(model='quad', color=color.black10, highlight_color=color.rgba(1,1,1, 1), scale=1, rotation_x = 90, collider = 'box')
+        quad.position = (column, 0, row)
+        grid.append(quad)
+
+figures = [] # Список для фигур. Все созданные фигуры помещаем в список
+
 
 cell_pos = 0 # Переменная для хранения позиции выбранной клетки
 
@@ -209,9 +213,17 @@ ai_anim = False
 def black_hod():
     pass
 
+from up import Music_player
+mp = Music_player(player=player, editor=editor)
+
+def player_select():
+    print(type(player))
+
+
+
 def update():
     global cell_pos, y, select_figure, board, a_w, a_b
-
+    
     if a_w:
         if a_w[0].position == a_w[1]:
             for i in figures:
@@ -240,31 +252,33 @@ def update():
 
     if mouse.left:   # Выбор клетки левой кнопкой мыши
         for j in range(0, 64):
-            print(select_figure)
-            if mouse.hovered_entity == grid[j] and (select_figure.position - (0,1,0) == grid[j].position):
-                select_figure.animate_position(select_figure.position + (0,-1,0), curve=curve.linear, duration=0.5)
-                #select_figure = None
-                break
-
-            if mouse.hovered_entity == grid[j]:           
-                cell_pos = mouse.hovered_entity.position
-                move = get_valid_user_move(board)
-                if (move == 0):
-                    if (board.is_check(pieces.Piece.WHITE)):
-                        print("Checkmate. Black Wins.")
-                        break
-                    else:
-                        print("Stalemate.")
-                        break
-                if (move == -1):
+            try:
+                if mouse.hovered_entity == grid[j] and (select_figure.position - (0,1,0) == grid[j].position):
+                    select_figure.animate_position(select_figure.position + (0,-1,0), curve=curve.linear, duration=0.5)
+                    #select_figure = None
                     break
-                board.perform_move(move)
-                
-                select_figure.animate_position(cell_pos, curve=curve.linear, duration=0.5)
-                a_w = (select_figure, cell_pos)
-                print("User move: " + move.to_string())
-                print(board.to_string())
-                Thread(target=ai_mov).start()
+
+                if mouse.hovered_entity == grid[j]:           
+                    cell_pos = mouse.hovered_entity.position
+                    move = get_valid_user_move(board)
+                    if (move == 0):
+                        if (board.is_check(pieces.Piece.WHITE)):
+                            print("Checkmate. Black Wins.")
+                            break
+                        else:
+                            print("Stalemate.")
+                            break
+                    if (move == -1):
+                        break
+                    board.perform_move(move)
+                    
+                    select_figure.animate_position(cell_pos, curve=curve.linear, duration=0.5)
+                    a_w = (select_figure, cell_pos)
+                    print("User move: " + move.to_string())
+                    print(board.to_string())
+                    Thread(target=ai_mov).start()
+            except:
+                print('Ахтунг маус лефт')
                 
     
     if held_keys['e']:      # выход на клавишу 'E'
