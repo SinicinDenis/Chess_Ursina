@@ -75,8 +75,8 @@ class Music_player(Audio):
             
             
             self.editor.enable()
-            self.editor.position = self.player.position
-            self.editor.direction = self.player.direction
+            self.editor.position = self.player.position + Vec3(0,2,0)
+            self.editor.look_at((0,0,0))
             camera.fov = 60
 
             mouse.visible = True

@@ -145,7 +145,7 @@ editor = EditorCamera()
 editor.look_at(ground)
 editor.disable()
 player = FirstPersonController(gravity = 0, y=2, z=-8)
-
+player.look_at(ground)
 
 grid = []   # Список для клеток
 for row in range(8):       # Над каждой клеткой создаём плоскость, чтобы иметь возможность взаимодействия с каждой клеткой    
